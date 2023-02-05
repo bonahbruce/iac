@@ -1,10 +1,10 @@
 variable "appservice" {
     type = map(object({
-        name = string
+            name = string
     }))
-  
+    default = {}  
 }
-
 variable "appservice_plan" {
     type = map(string)
+    default = {}
 }
