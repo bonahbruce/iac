@@ -1,0 +1,42 @@
+name: Build and Push Docker Image to ACR
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치로 푸시될 때 트리거
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 저장소 클론
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Azure 로그인
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 3. ACR에 로그인
+      - name: Log in to Azure Container Registry
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      # 4. Docker 이미지 빌드 및 태그
+      - name: Build and Tag Docker image
+        run: |
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }} .
+      
+      # 5. Docker 이미지 푸시
+      - name: Push Docker image to ACR
+        run: |
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }}
+
+      # 6. (선택) 이미지 최신 태그 업데이트
+      - name: Update 'latest' tag
+        run: |
+          docker tag ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }} ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
