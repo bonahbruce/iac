@@ -25,18 +25,18 @@ jobs:
         run: |
           az acr login --name ${{ secrets.ACR_NAME }}
 
-      # 4. Docker 이미지 빌드 및 태그
-      - name: Build and Tag Docker image
-        run: |
-          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }} .
+      # # 4. Docker 이미지 빌드 및 태그
+      # - name: Build and Tag Docker image
+      #   run: |
+      #     docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }} .
       
-      # 5. Docker 이미지 푸시
-      - name: Push Docker image to ACR
-        run: |
-          docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }}
+      # # 5. Docker 이미지 푸시
+      # - name: Push Docker image to ACR
+      #   run: |
+      #     docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }}
 
       # 6. (선택) 이미지 최신 태그 업데이트
       - name: Update 'latest' tag
         run: |
-          docker tag ${{ secrets.ACR_NAME }}.azurecr.io/myapp:${{ github.sha }} ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
+          docker tag mcr.microsoft.com/oss/nginx/nginx:1.17.3-alpine ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
           docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
