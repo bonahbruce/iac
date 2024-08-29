@@ -42,7 +42,7 @@ jobs:
           
           docker pull ubuntu:24.04
           docker tag ubuntu:24.04 ${{ secrets.ACR_NAME }}.azurecr.io/ubuntu:1.0
-          docker push ${{ secrets.ACR_NAME }}.azurecr.io/myapp:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/ubuntu:1.0
 
           az acr network-rule remove --resource-group webapp-rg --name acrkoo --ip-address ${{ steps.ip.outputs.ipv4}}
 
