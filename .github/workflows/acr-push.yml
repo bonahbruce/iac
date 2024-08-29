@@ -20,6 +20,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # 3. Action Runner의 IP를 확인
       - name: Get Public IP
         id: ip
         uses: haythem/public-ip@v1.3
@@ -28,15 +29,16 @@ jobs:
         run: |
           echo ${{ steps.ip.outputs.ipv4}}
           
-      # 3. ACR에 로그인
+      # 3. ACR에 로그인 전, Action Runner의 IP를 acr의 network rule에 add 후 login 진행(rule add 없을 시, acr 접근 불가)
+      # 해당 acr login의 경우, docker build 작업이 끝나고 acr로 push 전에 이루어져야 함.
       - name: Log in to Azure Container Registry
         run: |
           az acr network-rule add --resource-group webapp-rg --name acrkoo --ip-address ${{ steps.ip.outputs.ipv4}}
           az acr login --name ${{ secrets.ACR_NAME }}
 
-
-
-      # 4. (선택) 이미지 최신 태그 업데이트
+      # 4. 이미지 푸시
+      # 제 테스트로는 빌드는 수행하지 않고, docker pull 진행 후 tag하여 acr로 push만 하는 테스트 진행함.
+      # 마지막에 network-rule remove를 통해 해당 action runner의 ip 제거.
       - name: Update 'latest' tag
         run: |
           
